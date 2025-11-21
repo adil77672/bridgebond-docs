@@ -64,11 +64,8 @@ Helper hook `useUserPermissions` merges profile role + roles payload, exposing `
 
 ## 4. Integrations & External Services
 
-- **OneSignal Web Push:** Bootstrapped once per session with customizable categories & welcome message.
-- **HRIS Connectors:** Current UI supports custom API integrations. Merge.dev can replace bespoke connectors to accelerate BambooHR, ADP, Paycom, Workday, Paychex, Rippling, UKG, etc. Next steps:
-  1. Evaluate Merge.dev pricing/auth/webhook model (spike, 2–3 dev days).
-  2. Map Merge unified data objects to Bridgebond canonical user/org structures.
-  3. Update backend integration layer; frontend HRIS module already decoupled enough to consume new payload shape.
+- **OneSignal Web Push:** Bootstrapped once per session with customizable categories & welcome messaging to handle browser notifications.
+- **HRIS Connectors:** UI and API layer support multiple HRIS providers (e.g., BambooHR, ADP, Paycom, Workday, Paychex, Rippling, UKG). The architecture also allows adoption of an aggregation platform such as Merge.dev should the backend choose to abstract provider-specific logic.
 
 ## 5. Data & API Dependencies
 
@@ -92,15 +89,6 @@ Helper hook `useUserPermissions` merges profile role + roles payload, exposing `
 2. **Staging** – `yarn build:staging`, deploy via PM2 using `ecosystem.config.cjs`; run integration QA once backend endpoints aligned.
 3. **Production** – `yarn build:production`, PM2-managed process, OneSignal production app ID.
 4. **Monitoring** – PM2 logs under `/logs`, OneSignal dashboard for web push metrics.
-
-## 7. Demo & Release Timeline (as of Nov 21)
-
-| Milestone | Target |
-|-----------|--------|
-| Backend parity for all listed APIs | Nov 25–27 |
-| Merge.dev evaluation + recommendation | Nov 27 |
-| Integrated QA sweep (frontend + backend) | Nov 27–30 |
-| Dec 1 investor demo build & recording | Nov 30 |
 
 ---
 
