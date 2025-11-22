@@ -244,14 +244,14 @@ flowchart LR
 ### 7.3 Automation & Notification Loop
 
 ```mermaid
-stateDiagram-v2
-  [*] --> ScheduleTick
-  ScheduleTick --> CelebrationScan: "Daily 09:00"
-  CelebrationScan --> ReminderQueue: "eligible reminders"
-  ReminderQueue --> Notify: "Email + OneSignal"
-  Notify --> AuditEntry
+flowchart TD
+  Start([*]) --> ScheduleTick[ScheduleTick]
+  ScheduleTick -->|Daily 09:00| CelebrationScan[CelebrationScan]
+  CelebrationScan -->|eligible reminders| ReminderQueue[ReminderQueue]
+  ReminderQueue -->|Email + OneSignal| Notify[Notify]
+  Notify --> AuditEntry[AuditEntry]
   AuditEntry --> ScheduleTick
-  ScheduleTick --> LogCleanup: "Weekly 02:00"
+  ScheduleTick -->|Weekly 02:00| LogCleanup[LogCleanup]
   LogCleanup --> ScheduleTick
 ```
 
