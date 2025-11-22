@@ -17,15 +17,26 @@ This document distills how Bridge Bond’s backend works end-to-end: what we hav
 ## 2. System Architecture (High-Level)
 
 ```mermaid
-stateDiagram-v2
-  [*] --> ScheduleTick
-  ScheduleTick --> CelebrationScan: "Daily 09:00"
-  CelebrationScan --> ReminderQueue: "eligible reminders"
-  ReminderQueue --> Notify: "Email + OneSignal"
-  Notify --> AuditEntry
-  AuditEntry --> ScheduleTick
-  ScheduleTick --> LogCleanup: "Weekly 02:00"
-  LogCleanup --> ScheduleTick
+graph TD
+  subgraph Clients
+    A[Admin Portal] -->|JWT| B(API Gateway)
+    C[Org Admin UI] -->|JWT| B
+    D[Mobile/Web Users] -->|OTP/JWT| B
+  end
+
+  subgraph Backend
+    B --> E[Express App]
+    E --> F[Middlewares: auth, validate, rateLimiter, auditLog]
+    F --> G[Controllers]
+    G --> H[Services Layer]
+    H --> I[(MongoDB via Mongoose)]
+    H --> J[Integrations: Email, OneSignal, Cloud Storage]
+    H --> K[Node-Cron Scheduler]
+  end
+
+  K --> J
+  K --> I
+  J --> L[(Audit Logs & Notifications)]
 ```
 
 **Key Traits**
@@ -235,12 +246,12 @@ flowchart LR
 ```mermaid
 stateDiagram-v2
   [*] --> ScheduleTick
-  ScheduleTick --> CelebrationScan: Daily 09:00
-  CelebrationScan --> ReminderQueue: eligible reminders
-  ReminderQueue --> Notify: Email + OneSignal
+  ScheduleTick --> CelebrationScan: "Daily 09:00"
+  CelebrationScan --> ReminderQueue: "eligible reminders"
+  ReminderQueue --> Notify: "Email + OneSignal"
   Notify --> AuditEntry
   AuditEntry --> ScheduleTick
-  ScheduleTick --> LogCleanup: Weekly 02:00
+  ScheduleTick --> LogCleanup: "Weekly 02:00"
   LogCleanup --> ScheduleTick
 ```
 
@@ -268,6 +279,7 @@ stateDiagram-v2
   - Celebrations and DOB alerts allow recurring reminders, participant management, and automated scheduling.
   - Question & reaction system distributes master templates to orgs and captures employee engagement.
   - Weekly digest consolidates events, celebrations, and announcements per user preference.
+  - BridgeBond AI Chat keeps a single, never-ending conversation between every user and the AI assistant, scoped to their organization.
 - **Notifications**
   - Email and push channels, with org-level toggles per module.
   - Scheduler queues reminders at configured times; retriable sending with observable status.
